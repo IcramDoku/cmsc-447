@@ -8,6 +8,6 @@ curl: (6) Could not resolve host: POST
   "message": "User created successfully"
 }
 
-C:\Users\icram>curl http://127.0.0.1:5000/users
+C:\Users\icram>curl http://127.0.0.1:5000/users \
 []
 """
