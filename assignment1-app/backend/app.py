@@ -20,6 +20,8 @@ def create_user():
     user = Users.from_dict(data)
     users_collection = mongo.db.users
     users_collection.insert_one(user.to_dict())
+    data = request.json
+    print("usr: ", data.get('username'), " pwd: ", data.get('password'))
     return jsonify({'message': 'User created successfully'}), 201
 
 @app.route('/signin', methods=['POST'])
