@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const API_URL = 'http://127.0.0.1:5000'; // Replace with your API URL
@@ -100,6 +101,7 @@ function SignUp() {
       setPassword('');
       setName('');
       setSignupSuccessMessage(data.message);
+
     } catch (error) {
       setSignupError('Sign-up failed. Please check your information.');
     } finally {
@@ -143,6 +145,12 @@ function SignUp() {
           {isLoading ? 'Signing Up...' : 'Sign Up'}
         </button>
       </form>
+      <div>
+        Already have an account? 
+        <Link to="/student-login">
+        Login
+        </Link>
+      </div>
     </div>
   );
 }
