@@ -12,20 +12,48 @@ app.config['MONGO_URI'] = 'mongodb+srv://Icram:1234@cluster0.q35cw2y.mongodb.net
 mongo = PyMongo(app)
 
 # Import your User and Student classes from models.py
-from models import User, Student
+from models import Users, Students
 
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.json
-    user = User.from_dict(data)
+    user = Users.from_dict(data)
     users_collection = mongo.db.users
     users_collection.insert_one(user.to_dict())
     return jsonify({'message': 'User created successfully'}), 201
 
+@app.route('/signin', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
+
+        users_collection = mongo.db.users
+        user = users_collection.find_one({'username': username})
+
+        if user:
+            stored_password = user.get('password')
+            if stored_password == password:
+                # Authentication successful
+                print(f"User '{username}' successfully logged in.")
+                return jsonify({'message': 'Login successful'}), 200
+            else:
+                # Password does not match
+                print(f"User '{username}' login failed due to incorrect password.")
+                return jsonify({'error': 'Authentication failed'}), 401
+        else:
+            # User not found
+            print(f"User '{username}' not found.")
+            return jsonify({'error': 'Authentication failed'}), 401
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return jsonify({'error': 'An error occurred'}), 500
+
 @app.route('/students', methods=['POST'])
 def create_student():
     data = request.json
-    student = Student.from_dict(data)
+    student = Students.from_dict(data)
     students_collection = mongo.db.students
     students_collection.insert_one(student.to_dict())
     return jsonify({'message': 'Student created successfully'}), 201

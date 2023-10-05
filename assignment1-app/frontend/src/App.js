@@ -1,125 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import axios from 'axios';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import StudentDashboard from './pages/StudentDashboard';
+import { SignIn, SignUp } from './pages/student/UserStudnet';
 
-const API_URL = 'http://127.0.0.1:5000/users'; // Replace with your API URL
+
+const styles = {
+  navbar: {
+    position: 'sticky',
+    top: '0',
+    backgroundColor: '#007BFF',
+    padding: '10px',
+    textAlign: 'left',
+    zIndex: '100',
+  },
+  link: {
+    textDecoration: 'none',
+    color: '#fff',
+    margin: '0 10px',
+  },
+};
 
 function App() {
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false); // Track whether the user is signing up
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const fetchUsers = () => {
-    setIsLoading(true);
-    axios
-      .get(API_URL)
-      .then((response) => {
-        setUsers(response.data);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsLoading(false);
-      });
-  };
-
-  const handleLogin = () => {
-    // You should add authentication logic here, e.g., by sending a request to your backend API to verify credentials.
-    // For this example, let's assume successful login for demonstration purposes.
-    setIsLoggedIn(true);
-    fetchUsers(); // Fetch user data after login
-  };
-
-  const handleSignup = () => {
-    // You should add signup logic here, e.g., by sending a request to your backend API to create a new user.
-    // For this example, let's assume successful signup for demonstration purposes.
-    setIsLoggedIn(true);
-    setIsSignUp(false); // After signup, switch to signin mode
-    fetchUsers(); // Fetch user data after signup
-  };
-
-  useEffect(() => {
-    // You can also fetch user data here when the component loads initially.
-    if (isLoggedIn) {
-      fetchUsers();
-    }
-  }, [isLoggedIn]);
-
   return (
-    <div className="App">
-      <h1>User List</h1>
-
-      {isLoggedIn ? (
-        <div>
-          <button onClick={() => setIsLoggedIn(false)}>Logout</button>
-          <ul>
-            {users.map((user) => (
-              <li key={user._id}>
-                <strong>User ID:</strong> {user._id}<br />
-                <strong>Username:</strong> {user.username}<br />
-                <strong>Name:</strong> {user.name}<br />
-                <strong>Password:</strong> {user.password}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <div>
-          {isSignUp ? (
-            <div>
-              <h2>Sign Up</h2>
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button onClick={handleSignup}>Sign Up</button>
-              <p>
-                Already have an account?{' '}
-                <span onClick={() => setIsSignUp(false)}>Sign In</span>
-              </p>
-            </div>
-          ) : (
-            <div>
-              <h2>Sign In</h2>
-              <input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button onClick={handleLogin}>Sign In</button>
-              <p>
-                Don't have an account?{' '}
-                <span onClick={() => setIsSignUp(true)}>Sign Up</span>
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+    <Router>
+      <div>
+        <nav style={styles.navbar}>
+          <Link to="/" style={styles.link}>
+            Home
+          </Link>
+        </nav>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/student-signup" element={<SignUp />} />
+          <Route path="/student-login" element={<SignIn />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
 export default App;
-
-
-
 
 
