@@ -1,26 +1,5 @@
 from flask_pymongo import ObjectId
 
-class Users:
-    def __init__( self, username, name, password):
-        self.username = username
-        self.name = name
-        self.password = password
-
-    def to_dict(self):
-        return {
-            'username': self.username,
-            'name': self.name,
-            'password': self.password
-        }
-
-    @staticmethod
-    def from_dict(data):
-        return Users(
-            username=data.get('username'),
-            name=data.get('name'),
-            password=data.get('password')
-        )
-
 class Students:
     def __init__(self, studentID, name, creditsEarned):
         self.studentID = studentID

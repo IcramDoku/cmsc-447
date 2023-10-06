@@ -40,8 +40,8 @@ function Dashboard() {
         <Link to="/student-login" style={dashboardStyles.optionButton}>
         Login
         </Link>
-        <Link to="/student-signup" style={dashboardStyles.optionButton}>
-        Signup
+        <Link to="/student-register" style={dashboardStyles.optionButton}>
+        Register
         </Link>
       </div>
     </div>

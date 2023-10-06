@@ -4,121 +4,132 @@ import axios from 'axios';
 
 const API_URL = 'http://127.0.0.1:5000'; // Replace with your API URL
 
-function SignIn() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [signInError, setSignInError] = useState(null);
+function Login() {
+  const [studentID, setStudentID] = useState('');
+  const [name, setName] = useState('');
+  const [loginError, setLoginError] = useState(null);
+  const [loginSuccessMessage, setLoginSuccessMessage] = useState('');
 
-  const handleSignIn = async () => {
-    setIsLoading(true);
-    setSignInError(null);
+  const handleLogin = async () => {
+    setLoginError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/signin`, {
-        username: username,
-        password: password,
+      const response = await axios.post(`${API_URL}/login`, {
+        studentID: studentID,
+        name: name,
       });
 
       const data = response.data;
 
-      // Check if the sign-in was successful based on the response
+      // Check if the login was successful based on the response
       if (response.status === 200) {
-        // Handle successful sign-in here, e.g., navigate to a new page or store user data
-        console.log('Sign-in successful:', data);
+        // Handle successful login here, e.g., navigate to a new page or store user data
+        console.log('login successful:', data);
 
-        // Clear username and password fields after successful sign-in
-        setUsername('');
-        setPassword('');
+        // Clear studnetID and name fields after successful login
+        setStudentID('');
+        setName('');
+        setLoginSuccessMessage(data.message);
       } else {
-        // Handle sign-in failure
-        setSignInError('Sign-in failed. Please check your username and password.');
+        // Handle login failure
+        setLoginError('login failed. Please check your studnetID and name.');
       }
     } catch (error) {
-      console.error('Sign-in error:', error);
-      setSignInError('Sign-in failed. Please check your username and password.');
-    } finally {
-      setIsLoading(false);
+      console.error('login error:', error);
+      setLoginError('login failed. Please check your studnetID and name.');
     }
   };
 
   return (
     <div>
-      <h2>Sign In</h2>
-      {signInError && <p className="error">{signInError}</p>}
-      
+      <h2>Login</h2>
+      {loginError && <p className="error">{loginError}</p>}
+      {loginSuccessMessage && (
+        <p className="success">{loginSuccessMessage}</p>
+      )}
       <form>
         <div>
-          <label>Username:</label>
+          <label>Student ID:</label>
           <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="number"
+            value={studentID}
+            onChange={(e) => setStudentID(e.target.value)}
           />
         </div>
         <div>
-          <label>Password:</label>
+          <label>Full Name:</label>
           <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <button type="button" onClick={handleSignIn} disabled={isLoading}>
-          {isLoading ? 'Signing In...' : 'Sign In'}
+        <button type="button" onClick={handleLogin}>
+          {'Login'}
         </button>
       </form>
+      <div>
+        Not registered? 
+        <Link to="/student-register">
+         Register here
+        </Link>
+      </div>
+
     </div>
   );
 }
 
 
-function SignUp() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+function Register() {
+  const [studentID, setStudentID] = useState('');
   const [name, setName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [signupError, setSignupError] = useState(null);
-  const [signupSuccessMessage, setSignupSuccessMessage] = useState('');
+  const [creditsEarned, setCreditsEarned] = useState('');
+  const [registerError, setRegisterError] = useState(null);
+  const [registerSuccessMessage, setRegisterSuccessMessage] = useState('');
 
-  const handleSignUp = async () => {
-    setIsLoading(true);
-    setSignupError(null);
+  const handleRegister = async () => {
+    setRegisterError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/users`, {
-        username: username,
-        password: password,
+      const response = await axios.post(`${API_URL}/register`, {
+        studentID: studentID,
         name: name,
+        creditsEarned: creditsEarned,
       });
 
       // Assuming your API returns a success message or user data upon successful signup
       const data = response.data;
-      // You can handle the successful signup response here.
+      // You can handle the successful register response here.
 
-      // Clear form fields after successful signup
-      setUsername('');
-      setPassword('');
+      // Clear form fields after successful register
+      setStudentID('');
       setName('');
-      setSignupSuccessMessage(data.message);
+      setCreditsEarned('');
+      setRegisterSuccessMessage(data.message);
 
     } catch (error) {
-      setSignupError('Sign-up failed. Please check your information.');
-    } finally {
-      setIsLoading(false);
+      setRegisterError('Sign-up failed. Please check your information.');
     }
   };
 
   return (
     <div>
-      <h2>Sign Up</h2>
-      {signupError && <p className="error">{signupError}</p>}
-      {signupSuccessMessage && (
-        <p className="success">{signupSuccessMessage}</p>
+      <h2>Register</h2>
+      {registerError && <p className="error">{registerError}</p>}
+      {registerSuccessMessage && (
+        <p className="success">{registerSuccessMessage}</p>
       )}
       <form>
         <div>
-          <label>Name:</label>
+          <label>Student ID:</label>
+          <input
+            type="number"
+            value={studentID}
+            onChange={(e) => setStudentID(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Full Name:</label>
           <input
             type="text"
             value={name}
@@ -126,34 +137,26 @@ function SignUp() {
           />
         </div>
         <div>
-          <label>Username:</label>
+          <label>Credits Earned:</label>
           <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            type="number"
+            value={creditsEarned}
+            onChange={(e) => setCreditsEarned(e.target.value)}
           />
         </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button type="button" onClick={handleSignUp} disabled={isLoading}>
-          {isLoading ? 'Signing Up...' : 'Sign Up'}
+        <button type="button" onClick={handleRegister} >
+          {'Register'}
         </button>
       </form>
       <div>
-        Already have an account? 
+        Already registered? 
         <Link to="/student-login">
-        Login
+         Login here
         </Link>
       </div>
     </div>
   );
 }
 
-export { SignIn, SignUp }; 
+export { Login, Register }; 
 

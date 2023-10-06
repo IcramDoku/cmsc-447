@@ -1,7 +1,7 @@
 1. You will need to specify what libraries will be needed such as falsk, flask_cors, bson, flask_pymongo and more.
+1. speciflying the types of data intered into db as numbers limit them to only that type on the UI
 
-also on mac:
-
+or just do `python3 app.py` do NOT click 'Run Python File'
 
 THIS Connection is valid: \
 ->`Run Python File` do NOT do 'node app.py' \
