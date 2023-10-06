@@ -17,12 +17,23 @@ from models import Students, Instructors, Courses
 @app.route('/register', methods=['POST'])
 def create_student():
     data = request.json
-    student = Students.from_dict(data)
+    studentID = data.get('studentID')
+    
     students_collection = mongo.db.students
-    students_collection.insert_one(student.to_dict())
-    data = request.json
-    print("Id: ", data.get('studentID'), " name: ", data.get('name'), " credits earned: ", data.get('creditsEarned'))
-    return jsonify({'message': 'User created successfully'}), 201
+    studentIN = students_collection.find_one({'studentID': studentID})
+    if not studentID or not data.get('name'):
+        print("Either 'studentID' or 'name' is missing or empty.")
+        return jsonify({'error': 'missing or empty fields'}), 400
+    elif studentIN:
+        print(f"User '{studentID}' already exists.")
+        return jsonify({'error': 'already exists'}), 500
+    else:
+        student = Students.from_dict(data)
+        students_collection = mongo.db.students
+        students_collection.insert_one(student.to_dict())
+        data = request.json
+        print("Id: ", data.get('studentID'), " name: ", data.get('name'), " credits earned: ", data.get('creditsEarned'))
+        return jsonify({'message': 'User created successfully'}), 200
 
 @app.route('/login', methods=['POST'])
 def get_student():

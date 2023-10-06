@@ -100,7 +100,9 @@ function Register() {
       // Assuming your API returns a success message or user data upon successful signup
       const data = response.data;
       // You can handle the successful register response here.
-
+      if (response.status === 500) {
+        
+      }
       // Clear form fields after successful register
       setStudentID('');
       setName('');
@@ -108,7 +110,7 @@ function Register() {
       setRegisterSuccessMessage(data.message);
 
     } catch (error) {
-      setRegisterError('Sign-up failed. Please check your information.');
+      setRegisterError('Register failed. User already exists or empty fields.');
     }
   };
 
