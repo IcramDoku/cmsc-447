@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:5000'; // Replace with your API URL
+const API_URL = 'http://127.0.0.1:5000'; 
 
 function Login() {
   const [studentID, setStudentID] = useState('');
   const [name, setName] = useState('');
   const [loginError, setLoginError] = useState(null);
   const [loginSuccessMessage, setLoginSuccessMessage] = useState('');
+  const navigate = useNavigate(); //navigate to a new page
 
   const handleLogin = async () => {
     setLoginError(null);
@@ -30,6 +32,7 @@ function Login() {
         setStudentID('');
         setName('');
         setLoginSuccessMessage(data.message);
+        navigate('/student-view');
       } else {
         // Handle login failure
         setLoginError('login failed. Please check your studnetID and name.');
@@ -71,7 +74,7 @@ function Login() {
       <div>
         Not registered? 
         <Link to="/student-register">
-         Register here
+        Register here
         </Link>
       </div>
 
@@ -86,6 +89,7 @@ function Register() {
   const [creditsEarned, setCreditsEarned] = useState('');
   const [registerError, setRegisterError] = useState(null);
   const [registerSuccessMessage, setRegisterSuccessMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     setRegisterError(null);
@@ -99,15 +103,14 @@ function Register() {
 
       // Assuming your API returns a success message or user data upon successful signup
       const data = response.data;
-      // You can handle the successful register response here.
-      if (response.status === 500) {
-        
-      }
+
       // Clear form fields after successful register
       setStudentID('');
       setName('');
       setCreditsEarned('');
       setRegisterSuccessMessage(data.message);
+      // You can handle the successful register response here.
+      navigate('/student-login');
 
     } catch (error) {
       setRegisterError('Register failed. User already exists or empty fields.');
@@ -153,7 +156,7 @@ function Register() {
       <div>
         Already registered? 
         <Link to="/student-login">
-         Login here
+        Login here
         </Link>
       </div>
     </div>

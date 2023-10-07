@@ -62,6 +62,106 @@ def get_student():
     except Exception as e:
         print(f"An error occurred: {str(e)}")
         return jsonify({'error': 'An error occurred'}), 500
+    
+# GET request to fetch all instructors
+@app.route('/instructors', methods=['GET'])
+def get_instructors():
+    instructors_collection = mongo.db.instructors
+    instructors = instructors_collection.find()
+    instructor_list = [Instructors.from_dict(instructor) for instructor in instructors]
+    return jsonify([instructor.to_dict() for instructor in instructor_list])
+
+# POST request to create a new instructor
+@app.route('/instructors', methods=['POST'])
+def create_instructor():
+    data = request.get_json()
+    new_instructor = Instructors.from_dict(data)
+    
+    instructors_collection = mongo.db.instructors
+    result = instructors_collection.insert_one(new_instructor.to_dict())
+    
+    return jsonify(str(result.inserted_id)), 201
+
+# DELETE request to delete a single instructor by ID
+@app.route('/instructors/<string:instructor_id>', methods=['DELETE'])
+def delete_instructor(instructor_id):
+    instructors_collection = mongo.db.instructors
+
+    # Delete the instructor by ID
+    result = instructors_collection.delete_one({"instructorID": instructor_id})
+
+    if result.deleted_count > 0:
+        return jsonify({"message": "Instructor deleted successfully"}), 200
+    else:
+        return jsonify({"message": "Instructor not found or already deleted"}), 404
+
+
+
+# GET request to fetch all courses
+@app.route('/courses', methods=['GET'])
+def get_courses():
+    courses_collection = mongo.db.courses
+    courses = courses_collection.find()
+    course_list = [Courses.from_dict(course) for course in courses]
+    return jsonify([course.to_dict() for course in course_list])
+
+# POST request to create a new course
+@app.route('/courses', methods=['POST'])
+def create_course():
+    data = request.get_json()
+    new_course = Courses.from_dict(data)
+    
+    courses_collection = mongo.db.courses
+    result = courses_collection.insert_one(new_course.to_dict())
+    
+    return jsonify(str(result.inserted_id)), 201
+
+# DELETE request to delete a specific course by ID
+@app.route('/courses/<string:course_id>', methods=['DELETE'])
+def delete_course_by_id(course_id):
+    courses_collection = mongo.db.courses
+
+    # Delete the course with the specified ID from the collection
+    result = courses_collection.delete_one({"courseID": course_id})
+
+    if result.deleted_count > 0:
+        return jsonify({"message": "Course deleted successfully"}), 200
+    else:
+        return jsonify({"message": "Course not found"}), 404
+    
+    
+    
+    
+
+
+@app.route('/assign', methods=['POST'])
+def assign_instructor():
+    data = request.json
+    courseID = data.get('courseID')
+    instructorID = data.get('instructorID')
+
+    if not courseID or not instructorID:
+        return jsonify({'error': 'Missing courseID or instructorID'}), 400
+
+    try:
+        # Get a reference to the 'courses' collection using PyMongo
+        courses_collection = mongo.db.courses
+
+        # Find the course document using its 'courseID'
+        course = courses_collection.find_one({'courseID': courseID})
+
+        if course is None:
+            return jsonify({'error': 'Course not found'}), 404
+
+        # Update the 'instructorID' field of the course
+        course['instructorID'] = instructorID
+
+        # Update the course document in the 'courses' collection
+        courses_collection.update_one({'_id': course['_id']}, {'$set': course})
+
+        return jsonify({'message': 'Instructor assigned to course successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 

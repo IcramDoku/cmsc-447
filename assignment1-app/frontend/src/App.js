@@ -3,7 +3,9 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import StudentDashboard from './pages/StudentDashboard';
-import { Login, Register } from './pages/student/UserStudnet';
+import { Login, Register } from './pages/student/UserStudent';
+import UserAdmin from './pages/administrator/UserAdmin';
+import StudentView from './pages/student/studentView';
 
 
 const styles = {
@@ -43,6 +45,8 @@ function App() {
           <Route path="/student-dashboard" element={<StudentDashboard />} />
           <Route path="/student-register" element={<Register />} />
           <Route path="/student-login" element={<Login />} />
+          <Route path="/admin-login" element={<UserAdmin />} />
+          <Route path="/student-view" element={<StudentView />} />
         </Routes>
       </div>
     </Router>
