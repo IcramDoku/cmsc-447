@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const API_URL = 'http://127.0.0.1:5000';
@@ -19,8 +19,10 @@ function UserAdmin() {
 
   const [assignedCourses, setAssignedCourses] = useState([]);
   const [assignmentStatus, setAssignmentStatus] = useState(null);
+  const [courseStatus, setCourseStatus] = useState(null);
+  const [instructorStatus, setInstructorStatus] = useState(null);
 
-  const navigate = useNavigate();
+  ///const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch instructors and courses from the server on component mount
@@ -42,19 +44,28 @@ function UserAdmin() {
   }, []);
 
   const handleAddCourse = async () => {
+    if (!courseID || !courseTitle) {
+      setCourseStatus('Missing course ID or course title');
+      return;
+    }
+
     try {
       const response = await axios.post(`${API_URL}/courses`, {
         courseID: courseID,
         courseTitle: courseTitle,
         instructorID: instructorID,
       });
-
-      const data = response.data;
+      setCourseStatus('Course created successfully!');
+      //re-render
+      axios.get(`${API_URL}/courses`)
+      .then((response) => {
+        setCourses(response.data);
+      })
 
       setCourseID('');
       setCourseTitle('');
       setInstructorID('');
-      navigate('/admin-login');
+
     } catch (error) {
       console.error('Error in add course: ', error);
     }
@@ -69,6 +80,12 @@ function UserAdmin() {
       setCourses(courses.filter((course) => course.id !== courseID));
 
       // Optionally, you can display a success message or perform other actions upon successful removal.
+      //re-render
+      axios.get(`${API_URL}/courses`)
+      .then((response) => {
+        setCourses(response.data);
+      })
+
     } catch (error) {
       // Handle errors, e.g., show an error message to the user
       console.error('Error removing course:', error);
@@ -76,14 +93,23 @@ function UserAdmin() {
   };
 
   const handleAddInstructor = async () => {
+    if (!instructorID || !name || !department) {
+      setInstructorStatus('Missing instructorID, name, or department');
+      return;
+    }
+
     try {
       const response = await axios.post(`${API_URL}/instructors`, {
         instructorID: instructorID,
         name: name,
         department: department,
       });
-
-      const data = response.data;
+      setInstructorStatus('Instructor created successfully!');
+      //re-render
+      axios.get(`${API_URL}/instructors`)
+      .then((response) => {
+        setInstructors(response.data);
+      })
 
       setInstructorID('');
       setName('');
@@ -101,8 +127,13 @@ function UserAdmin() {
   
       // Update the state to remove the course from the list
       setInstructors(instructors.filter((instructor) => instructor.id !== instructorID));
-  
+      
       // Optionally, you can display a success message or perform other actions upon successful removal.
+      //re-render
+      axios.get(`${API_URL}/instructors`)
+      .then((response) => {
+        setInstructors(response.data);
+      })
     } catch (error) {
       // Handle errors, e.g., show an error message to the user
       console.error('Error removing course:', error);
@@ -115,19 +146,25 @@ function UserAdmin() {
       return;
     }
 
-    axios
-      .post(`${API_URL}/assign`, {
+    axios.post(`${API_URL}/assign`, {
         courseID,
         instructorID,
-      })
-      .then((response) => {
+    }).then((response) => {
         console.log('Server response:', response.data);
         const assignedCourse = {
           courseID,
           instructorID,
         };
         setAssignedCourses([...assignedCourses, assignedCourse]);
-        setAssignmentStatus('Instructor assigned successfully');
+        setAssignmentStatus('Instructor assigned successfully!');
+        //re-render
+        axios.get(`${API_URL}/courses`)
+        .then((response) => {
+          setCourses(response.data);
+        })
+        //clear after successful assignment
+        setCourseID('');
+        setInstructorID('');
       })
       .catch((error) => {
         if (error.response) {
@@ -159,23 +196,27 @@ function UserAdmin() {
           <li key={course.id}>
             {course.courseID}{' '}
             {course.courseTitle}{' '}
+            {course.instructorID}{' '}
             <button onClick={() => handleRemoveCourse(course.courseID)}>Remove</button>
           </li>
         ))}
       </ul>
       <div>
         <input
-          type="text"
+          type="number"
           placeholder="Course ID"
+          value={courseID}
           onChange={(e) => setCourseID(e.target.value)}
         />
         <input
           type="text"
           placeholder="Course Title"
+          value={courseTitle}
           onChange={(e) => setCourseTitle(e.target.value)}
         />
         <button onClick={handleAddCourse}>Add Course</button>
       </div>
+      {courseStatus && <p>{courseStatus}</p>}
 
       {/* Instructor Management */}
       <h2>Instructor Management</h2>
@@ -191,22 +232,26 @@ function UserAdmin() {
       </ul>
       <div>
         <input
-          type="text"
+          type="number"
           placeholder="Instructor ID"
+          value={instructorID}
           onChange={(e) => setInstructorID(e.target.value)}
         />
         <input
           type="text"
           placeholder="Instructor Name"
+          value={name}
           onChange={(e) => setName(e.target.value)}
         />
         <input
           type="text"
           placeholder="Department"
+          value={department}
           onChange={(e) => setDepartment(e.target.value)}
         />
         <button onClick={handleAddInstructor}>Add Instructor</button>
       </div>
+      {instructorStatus && <p>{instructorStatus}</p>}
 
       {/* Assign Instructors to Courses */}
       <h2>Assign Instructors to Courses</h2>

@@ -129,6 +129,7 @@ function Register() {
           <label>Student ID:</label>
           <input
             type="number"
+            placeholder="Your ID"
             value={studentID}
             onChange={(e) => setStudentID(e.target.value)}
           />
@@ -137,6 +138,7 @@ function Register() {
           <label>Full Name:</label>
           <input
             type="text"
+            placeholder="Your Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -145,6 +147,7 @@ function Register() {
           <label>Credits Earned:</label>
           <input
             type="number"
+            placeholder="total credits"
             value={creditsEarned}
             onChange={(e) => setCreditsEarned(e.target.value)}
           />
