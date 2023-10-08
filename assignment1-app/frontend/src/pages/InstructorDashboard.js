@@ -32,26 +32,20 @@ const dashboardStyles = {
 };
 
 function Dashboard() {
-  return (
-    <div style={dashboardStyles.container}>
-      <h1 style={dashboardStyles.heading}>Welcome to the Dashboard!</h1>
-      <p>Please select an option:</p>
-      <div style={dashboardStyles.options}>
-        <Link to="/admin-dashboard" style={dashboardStyles.optionButton}>
-          Admin
-        </Link>
-        <Link to="/student-dashboard" style={dashboardStyles.optionButton}>
-          Student
-        </Link>
-        <Link to="/instructor-dashboard" style={dashboardStyles.optionButton}>
-          Instructor
-        </Link>
+    return (
+      <div style={dashboardStyles.container}>
+        <h1 style={dashboardStyles.heading}>Welcome Instructor!</h1>
+        <p>Please select an option:</p>
+        <div style={dashboardStyles.options}>
+          <Link to="/instructor-login" style={dashboardStyles.optionButton}>
+          Login
+          </Link>
+          <Link to="/instructor-register" style={dashboardStyles.optionButton}>
+          Register
+          </Link>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
 export default Dashboard;
-
-
-

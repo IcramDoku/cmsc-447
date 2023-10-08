@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-//import { Link } from 'react-router-dom';
-//import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const API_URL = 'http://127.0.0.1:5000';
@@ -284,6 +283,11 @@ function UserAdmin() {
         <button onClick={assignInstructor}>Assign</button>
       </div>
       {assignmentStatus && <p>{assignmentStatus}</p>}
+      <div>
+        <Link to="/">
+        Log out
+        </Link>
+      </div>
     </div>
 
   );

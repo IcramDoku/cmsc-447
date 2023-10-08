@@ -1,16 +1,18 @@
 from flask_pymongo import ObjectId
 
 class Students:
-    def __init__(self, studentID, name, creditsEarned):
+    def __init__(self, studentID, name, creditsEarned, enrolledCourses=None):
         self.studentID = studentID
         self.name = name
         self.creditsEarned = creditsEarned
-
+        self.enrolledCourses = enrolledCourses or []
+        
     def to_dict(self):
         return {
             'studentID': self.studentID,
             'name': self.name,
-            'creditsEarned': self.creditsEarned
+            'creditsEarned': self.creditsEarned,
+            'enrolledCourses': self.enrolledCourses,
         }
 
     @staticmethod
@@ -18,7 +20,8 @@ class Students:
         return Students(
             studentID=data.get('studentID'),
             name=data.get('name'),
-            creditsEarned=data.get('creditsEarned')
+            creditsEarned=data.get('creditsEarned'),
+            enrolledCourses=data.get('enrolledCourses', [])
         )
         
 class Instructors:
@@ -43,16 +46,20 @@ class Instructors:
         )
         
 class Courses:
-    def __init__(self, courseID, courseTitle, instructorID):
+    def __init__(self, courseID, courseTitle, instructorID, instructor_name=None, instructor_department=None):
         self.courseID = courseID
         self.courseTitle = courseTitle
         self.instructorID = instructorID
+        self.instructor_name = instructor_name
+        self.instructor_department = instructor_department
 
     def to_dict(self):
         return {
             'courseID': self.courseID,
             'courseTitle': self.courseTitle,
-            'instructorID': self.instructorID
+            'instructorID': self.instructorID,
+            'instructor_name': self.instructor_name,
+            'instructor_department': self.instructor_department
         }
 
     @staticmethod
@@ -60,5 +67,13 @@ class Courses:
         return Courses(
             courseID=data.get('courseID'),
             courseTitle=data.get('courseTitle'),
-            instructorID=data.get('instructorID')
+            instructorID=data.get('instructorID'),
+            instructor_name=data.get('instructor_name'),  
+            instructor_department=data.get('instructor_department') 
         )
+        
+
+
+
+
+

@@ -1,89 +1,185 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import axios from 'axios'; // Import axios for making API requests
 
-const StudentView = ({ name }) => {
-  // Sample course data
-  const initialCourses = [
-    { id: 1, name: 'Mathematics', status: 'Not Enrolled' },
-    { id: 2, name: 'History', status: 'Not Enrolled' },
-    { id: 3, name: 'Science', status: 'Not Enrolled' },
-    { id: 4, name: 'Literature', status: 'Not Enrolled' },
-  ];
+function StudentView() {
+  const location = useLocation();
+  const { studentID, name } = location.state || {};
+  const [creditsEarned, setCreditsEarned] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-  const [courses, setCourses] = useState(initialCourses);
+  const API_URL = 'http://127.0.0.1:5000'; 
 
-  // Function to toggle the enrollment status of a course
-  const toggleEnrollment = (id) => {
-    setCourses((prevCourses) =>
-      prevCourses.map((course) =>
-        course.id === id
-          ? {
-              ...course,
-              status: course.status === 'Enrolled' ? 'Not Enrolled' : 'Enrolled',
-            }
-          : course
-      )
-    );
+  useEffect(() => {
+    axios.get(`${API_URL}/view-courses`)
+      .then((response) => {
+        console.log("API courses:", response.data);
+        setCourses(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching courses:', error);
+      });
+      // Make an API request to fetch the enrolled courses for the student
+    axios.get(`${API_URL}/student-courses/${studentID}`)
+      .then((response) => {
+        console.log("API Student Courses:", response.data);
+        setEnrolledCourses(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching enrolled courses:', error);
+      });
+    axios.get(`${API_URL}/credits-earned/${studentID}`)
+      .then((response) => {
+        console.log("API Credits Earned:", response.data);
+        setCreditsEarned(response.data.creditsEarned);
+      })
+      .catch((error) => {
+        console.error('Error fetching credits earned:', error);
+      });
+      
+  }, [studentID]);
+
+  const handleEnrollment = async (courseID) => {
+    var currentCredits = parseInt(creditsEarned, 10);
+    try {
+      // Make an API request to enroll the student in the course
+      const response = await axios.post(`${API_URL}/enrollment`, {
+        studentID,
+        courseID,
+      });
+  
+      if (response.status === 200) {
+        // Check if the enrollment was successful
+        if (response.data.message === 'Enrollment successful') {
+          // Update the state to reflect the new enrollment status
+          setCourses((prevCourses) =>
+            prevCourses.map((course) =>
+              course.courseID === courseID ? { ...course, status: 'Enrolled' } : course
+            )
+          );
+  
+          // Fetch the enrolled courses for the student and update the state
+          axios.get(`${API_URL}/student-courses/${studentID}`)
+            .then((response) => {
+              console.log("Enrolled courses:", response.data);
+              setEnrolledCourses(response.data);
+            })
+            .catch((error) => {
+              console.error('Error fetching enrolled courses:', error);
+            });
+            var newCreditsEarned = currentCredits + 3;
+            setCreditsEarned(newCreditsEarned);
+        } else {
+          console.error('Enrollment failed:', response.data.message);
+        }
+      }
+    } catch (error) {
+      console.error('Error with enrollment:', error);
+    }
   };
+  
 
-  // Filter enrolled courses
-  const enrolledCourses = courses.filter((course) => course.status === 'Enrolled');
+  const handleRemoveSingleCourse = async (courseID) => {
+    var currentCredits = parseInt(creditsEarned, 10);
+    try {
+      // Make a DELETE request to remove the course for the student
+      const response = await axios.delete(`${API_URL}/student-courses/${studentID}/remove/${courseID}`);
+
+      if (response.status === 200) {
+        // Update the state to remove the course from enrolledCourses
+        setEnrolledCourses((prevEnrolledCourses) =>
+          prevEnrolledCourses.filter((course) => course.courseID !== courseID)
+        );
+        var newCreditsEarned = currentCredits - 3;
+        setCreditsEarned(newCreditsEarned);
+      }
+    } catch (error) {
+      console.error('Error removing course:', error);
+    }
+  };
+  
+  
 
   return (
     <div>
-      <h1>Hello, {name}</h1>
+      <div>
+        <h1>Student Schedule and Registration</h1>
+        {studentID && <p>Student ID: {studentID}</p>}
+        {name && <p>Name: {name}</p>}
+        {creditsEarned && <p>Credits Earned: {creditsEarned}</p>}
+        {/* Your student view content here */}
+      </div>
+      <h1>Hello, {name}!</h1>
       <table>
         {/* Render 'My Courses' section only if there are enrolled courses */}
         {enrolledCourses.length > 0 && (
           <thead>
             <tr>
-              <th><h2>My Courses:</h2></th>
+              <th>
+                <h2>My Courses:</h2>
+              </th>
             </tr>
           </thead>
         )}
-        <tbody>
-          {enrolledCourses.map((course) => (
-            <tr key={course.id}>
-              <td>{course.name}</td>
-              <th>Instructor</th>
-              <th>Department</th>
-              <th>Grade</th>
-              <th>Credits Hours</th>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h2>Your Choice Of Courses:</h2>
-      <table>
         <thead>
           <tr>
             <th>Course Title</th>
             <th>Instructor</th>
             <th>Department</th>
             <th>Credits Hours</th>
-            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
-          {courses.map((course) => (
-            <tr key={course.id}>
-              <td>{course.name}</td>
-              <td>{}</td>
-              <td>{}</td>
-              <td>{}</td>
-              <td>{course.status}</td>
-              <td>
-                <button onClick={() => toggleEnrollment(course.id)}>
-                  {course.status === 'Enrolled' ? 'Drop' : 'Enroll'}
-                </button>
-              </td>
+          {enrolledCourses.map((course) => (
+            <tr key={course.courseID}>
+              <td>{course.courseTitle}</td>
+              <td>{course.instructor_name}{/* You need to fetch and display the instructor's name here */}</td>
+              <td>{course.instructor_department}{/* You need to fetch and display the instructor's department here */}</td>
+              <td>3</td> {/* # of credits*/}
+              <button onClick={() => handleRemoveSingleCourse(course.courseID)}>Drop</button>
             </tr>
           ))}
         </tbody>
       </table>
+      <h2>Your Choice Of Courses:</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Course Title</th>
+              <th>Instructor</th>
+              <th>Department</th>
+              <th>Credits Hours</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {courses.map((course) => (
+              <tr key={course.courseID}>
+                <td>{course.courseTitle}</td>
+                <td>{course.instructor_name}{/* You need to fetch and display the instructor's name here */}</td>
+                <td>{course.instructor_department}{/* You need to fetch and display the instructor's department here */}</td>
+                <td>3</td> {/* Assuming credit hours is always 3 */}
+                <td>
+                  <button onClick={() => handleEnrollment(course.courseID)}>
+                    {'Enroll'}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div>
+        <Link to="/">
+        Log out
+        </Link>
+      </div>
     </div>
   );
-};
+}
 
 export default StudentView;
+
 

@@ -63,6 +63,16 @@ def get_student():
         print(f"An error occurred: {str(e)}")
         return jsonify({'error': 'An error occurred'}), 500
     
+@app.route('/credits-earned/<string:studentID>', methods=['GET'])
+def get_credits_earned(studentID):
+    student = mongo.db.students.find_one({'studentID': studentID})
+
+    if student:
+        credits_earned = student.get('creditsEarned')
+        return jsonify({'studentID': studentID, 'creditsEarned': credits_earned})
+    else:
+        return jsonify({'message': 'Student not found'})
+    
 # GET request to fetch all instructors
 @app.route('/instructors', methods=['GET'])
 def get_instructors():
@@ -129,10 +139,6 @@ def delete_course_by_id(course_id):
     else:
         return jsonify({"message": "Course not found"}), 404
     
-    
-    
-    
-
 
 @app.route('/assign', methods=['POST'])
 def assign_instructor():
@@ -162,6 +168,132 @@ def assign_instructor():
         return jsonify({'message': 'Instructor assigned to course successfully'}), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/view-courses', methods=['GET'])
+def view_courses():
+    courses_collection = mongo.db.courses  # Replace 'mongo' with your MongoDB connection
+    all_courses = courses_collection.find()
+
+    # Initialize a list to store course data including instructor information
+    courses_data = []
+
+    for course in all_courses:
+        course_data = Courses.from_dict(course)
+        instructor_id = course_data.instructorID
+
+        # Fetch instructor information based on instructorID
+        if instructor_id:
+            instructors_collection = mongo.db.instructors  # Replace 'mongo' with your MongoDB connection
+            instructor = instructors_collection.find_one({'instructorID': instructor_id})
+            if instructor:
+                instructor_data = Instructors.from_dict(instructor)
+                course_data.instructor_name = instructor_data.name
+                course_data.instructor_department = instructor_data.department
+
+        courses_data.append(course_data)
+
+    # Convert the list of course data to dictionaries and return as JSON
+    courses_json = [course.to_dict() for course in courses_data]
+
+    return jsonify(courses_json)
+
+@app.route('/enrollment', methods=['POST'])
+def enroll_student():
+    data = request.json
+    studentID = data.get('studentID')
+    courseID = data.get('courseID')
+    
+    # Check if the student and course exist in your database (you need to implement this)
+    student = mongo.db.students.find_one({'studentID': studentID})
+    course = mongo.db.courses.find_one({'courseID': courseID})
+    
+    if student and course:
+        enrolledCourses = student.get('enrolledCourses', [])
+        
+        if courseID not in enrolledCourses:
+            # Add the course ID to the student's enrolled courses
+            enrolledCourses.append(courseID)
+            mongo.db.students.update_one({'studentID': studentID}, {'$set': {'enrolledCourses': enrolledCourses}})
+            return jsonify({'message': 'Enrollment successful'})
+        else:
+            return jsonify({'message': 'Student is already enrolled in this course'})
+    else:
+        return jsonify({'message': 'Student or course not found'})
+
+
+
+
+
+
+#@app.route('/student-courses/<string:studentID>', methods=['GET'])
+#def get_student_courses(studentID):
+
+
+# GET request to fetch enrolled courses for a student
+@app.route('/student-courses/<string:studentID>', methods=['GET'])
+def get_student_courses(studentID):
+    # Find the student based on the provided studentID
+    student = mongo.db.students.find_one({'studentID': studentID})
+
+    if student:
+        # Retrieve the list of course IDs enrolled by the student
+        enrolledCourses = student.get('enrolledCourses', [])
+
+        # Initialize a list to store course data
+        courses_data = []
+
+        for courseID in enrolledCourses:
+            # Fetch the course data based on courseID
+            course = mongo.db.courses.find_one({'courseID': courseID})
+            if course:
+                # Convert the Courses object to a dictionary
+                course_data = Courses.from_dict(course).to_dict()
+
+                # Fetch instructor information based on instructorID
+                instructor_id = course_data.get('instructorID')
+                if instructor_id:
+                    instructors_collection = mongo.db.instructors
+                    instructor = instructors_collection.find_one({'instructorID': instructor_id})
+                    if instructor:
+                        instructor_data = Instructors.from_dict(instructor)
+                        course_data['instructor_name'] = instructor_data.name
+                        course_data['instructor_department'] = instructor_data.department
+
+                courses_data.append(course_data)
+
+        # Convert the list of course data to JSON
+        return jsonify(courses_data)
+
+    else:
+        return jsonify({'message': 'Student not found'})
+
+# DELETE request to remove a single course for a student
+@app.route('/student-courses/<string:studentID>/remove/<string:courseID>', methods=['DELETE'])
+def remove_student_course(studentID, courseID):
+    # Find the student based on the provided studentID
+    student = mongo.db.students.find_one({'studentID': studentID})
+
+    if student:
+        # Retrieve the list of course IDs enrolled by the student
+        enrolledCourses = student.get('enrolledCourses', [])
+
+        if courseID in enrolledCourses:
+            # Remove the course ID from the student's enrolled courses
+            enrolledCourses.remove(courseID)
+
+            # Update the student's enrolled courses in the database
+            mongo.db.students.update_one({'studentID': studentID}, {'$set': {'enrolledCourses': enrolledCourses}})
+
+            return jsonify({'message': 'Course removed successfully'})
+        else:
+            return jsonify({'message': 'Course not found in the student\'s enrolled courses'})
+    else:
+        return jsonify({'message': 'Student not found'})
+
+
+
+
 
 
 

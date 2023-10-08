@@ -3,10 +3,11 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import StudentDashboard from './pages/StudentDashboard';
+import InstructorDashboard from './pages/InstructorDashboard';
 import { Login, Register } from './pages/student/UserStudent';
 import UserAdmin from './pages/administrator/UserAdmin';
 import StudentView from './pages/student/studentView';
-
+import { LoginInstructor, RegisterInstructor } from './pages/instructor/UserInstructor';
 
 const styles = {
   navbar: {
@@ -38,15 +39,21 @@ function App() {
           <Link to="/student-dashboard" style={styles.link}>
             Student
           </Link>
+          <Link to="/instructor-dashboard" style={styles.link}>
+            Instructor
+          </Link>
         </nav>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/instructor-dashboard" element={<InstructorDashboard />} />
           <Route path="/student-register" element={<Register />} />
           <Route path="/student-login" element={<Login />} />
           <Route path="/admin-login" element={<UserAdmin />} />
           <Route path="/student-view" element={<StudentView />} />
+          <Route path="/instructor-login" element={<LoginInstructor />} />
+          <Route path="/instructor-register" element={<RegisterInstructor />} />
         </Routes>
       </div>
     </Router>
