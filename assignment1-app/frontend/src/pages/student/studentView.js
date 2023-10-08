@@ -21,7 +21,7 @@ function StudentView() {
       .catch((error) => {
         console.error('Error fetching courses:', error);
       });
-      // Make an API request to fetch the enrolled courses for the student
+    // Make an API request to fetch the enrolled courses for the student
     axios.get(`${API_URL}/student-courses/${studentID}`)
       .then((response) => {
         console.log("API Student Courses:", response.data);
@@ -129,6 +129,7 @@ function StudentView() {
             <th>Instructor</th>
             <th>Department</th>
             <th>Credits Hours</th>
+            <th>Grade</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -139,6 +140,7 @@ function StudentView() {
               <td>{course.instructor_name}{/* You need to fetch and display the instructor's name here */}</td>
               <td>{course.instructor_department}{/* You need to fetch and display the instructor's department here */}</td>
               <td>3</td> {/* # of credits*/}
+              <td>97%</td>
               <button onClick={() => handleRemoveSingleCourse(course.courseID)}>Drop</button>
             </tr>
           ))}

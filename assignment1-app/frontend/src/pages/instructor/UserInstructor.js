@@ -6,9 +6,8 @@ import axios from 'axios';
 const API_URL = 'http://127.0.0.1:5000'; 
 
 function LoginInstructor() {
-  const [studentID, setStudentID] = useState('');
+  const [instructorID, setinstructorID] = useState('');
   const [name, setName] = useState('');
-  const [creditsEarned, setCreditsEarned] = useState('');
   const [loginError, setLoginError] = useState(null);
   const [loginSuccessMessage, setLoginSuccessMessage] = useState('');
   const navigate = useNavigate();
@@ -17,10 +16,9 @@ function LoginInstructor() {
     setLoginError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/login`, {
-        studentID: studentID,
+      const response = await axios.post(`${API_URL}/instructor-login`, {
+        instructorID: instructorID,
         name: name,
-        creditsEarned: creditsEarned,
       });
 
       const data = response.data;
@@ -31,13 +29,13 @@ function LoginInstructor() {
         console.log('login successful:', data);
 
         // Clear studnetID and name fields after successful login
-        setStudentID('');
+        setinstructorID('');
         setName('');
         setLoginSuccessMessage(data.message);
 
         // Use the "useNavigate" hook to navigate to "/student-view" with query parameters
-        navigate('/student-view', {
-          state: { studentID, name}, // Pass studentID and name as query parameters
+        navigate('/instructor-view', {
+          state: { instructorID, name}, // Pass instructorID and name as query parameters
         });
       } else {
         // Handle login failure
@@ -58,12 +56,12 @@ function LoginInstructor() {
       )}
       <form>
         <div>
-          <label>Student ID:</label>
+          <label>Instructor ID:</label>
           <input
             type="number"
-            placeholder="Your ID"
-            value={studentID}
-            onChange={(e) => setStudentID(e.target.value)}
+            placeholder="Instructor ID"
+            value={instructorID}
+            onChange={(e) => setinstructorID(e.target.value)}
           />
         </div>
         <div>
@@ -81,7 +79,7 @@ function LoginInstructor() {
       </form>
       <div>
         Not registered? 
-        <Link to="/student-register">
+        <Link to="/instructor-register">
         Register here
         </Link>
       </div>
@@ -92,9 +90,9 @@ function LoginInstructor() {
 
 
 function RegisterInstructor() {
-  const [studentID, setStudentID] = useState('');
+  const [instructorID, setinstructorID] = useState('');
   const [name, setName] = useState('');
-  const [creditsEarned, setCreditsEarned] = useState('');
+  const [department, setDepartment] = useState('');
   const [registerError, setRegisterError] = useState(null);
   const [registerSuccessMessage, setRegisterSuccessMessage] = useState('');
   const navigate = useNavigate();
@@ -103,22 +101,22 @@ function RegisterInstructor() {
     setRegisterError(null);
 
     try {
-      const response = await axios.post(`${API_URL}/register`, {
-        studentID: studentID,
+      const response = await axios.post(`${API_URL}/instructors`, {
+        instructorID: instructorID,
         name: name,
-        creditsEarned: creditsEarned,
+        department: department,
       });
 
       // Assuming your API returns a success message or user data upon successful signup
       const data = response.data;
 
       // Clear form fields after successful register
-      setStudentID('');
+      setinstructorID('');
       setName('');
-      setCreditsEarned('');
+      setDepartment('');
       setRegisterSuccessMessage(data.message);
       // You can handle the successful register response here.
-      navigate('/student-login');
+      navigate('/instructor-login');
 
     } catch (error) {
       setRegisterError('Register failed. User already exists or empty fields.');
@@ -134,30 +132,30 @@ function RegisterInstructor() {
       )}
       <form>
         <div>
-          <label>Student ID:</label>
+          <label>Instructor ID:</label>
           <input
             type="number"
-            placeholder="Your ID"
-            value={studentID}
-            onChange={(e) => setStudentID(e.target.value)}
+            placeholder="Instructor ID"
+            value={instructorID}
+            onChange={(e) => setinstructorID(e.target.value)}
           />
         </div>
         <div>
           <label>Full Name:</label>
           <input
             type="text"
-            placeholder="Your Name"
+            placeholder="Your Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div>
-          <label>Credits Earned:</label>
+          <label>Department:</label>
           <input
-            type="number"
-            placeholder="Total Credits"
-            value={creditsEarned}
-            onChange={(e) => setCreditsEarned(e.target.value)}
+            type="text"
+            placeholder="Department Name"
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
           />
         </div>
         <button type="button" onClick={handleRegister} >
@@ -166,7 +164,7 @@ function RegisterInstructor() {
       </form>
       <div>
         Already registered? 
-        <Link to="/student-login">
+        <Link to="/instructor-login">
         Login here
         </Link>
       </div>

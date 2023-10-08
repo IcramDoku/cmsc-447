@@ -8,6 +8,7 @@ import { Login, Register } from './pages/student/UserStudent';
 import UserAdmin from './pages/administrator/UserAdmin';
 import StudentView from './pages/student/studentView';
 import { LoginInstructor, RegisterInstructor } from './pages/instructor/UserInstructor';
+import InstructorView from './pages/instructor/InstructorView';
 
 const styles = {
   navbar: {
@@ -54,6 +55,7 @@ function App() {
           <Route path="/student-view" element={<StudentView />} />
           <Route path="/instructor-login" element={<LoginInstructor />} />
           <Route path="/instructor-register" element={<RegisterInstructor />} />
+          <Route path="/instructor-view" element={<InstructorView />} />
         </Routes>
       </div>
     </Router>
