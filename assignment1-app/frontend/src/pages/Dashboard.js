@@ -40,11 +40,11 @@ function Dashboard() {
         <Link to="/admin-dashboard" style={dashboardStyles.optionButton}>
           Admin
         </Link>
-        <Link to="/student-dashboard" style={dashboardStyles.optionButton}>
-          Student
-        </Link>
         <Link to="/instructor-dashboard" style={dashboardStyles.optionButton}>
           Instructor
+        </Link>
+        <Link to="/student-dashboard" style={dashboardStyles.optionButton}>
+          Student
         </Link>
       </div>
     </div>

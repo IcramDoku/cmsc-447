@@ -152,10 +152,12 @@ def get_courses_by_instructor(instructor_id):
             enrolled_students = course.get("enrolledStudents", [])
 
             students_info = []
+            
 
             for student_id in enrolled_students:
                 student = students_collection.find_one({"studentID": student_id})
                 if student:
+                    course_grade = []
                     # Check if the student has a grades dictionary
                     if 'grades' in student:
                         grades = student['grades']
@@ -270,10 +272,6 @@ def get_department(instructorID):
         return jsonify({'instructorID': instructorID, 'department': department})
     else:
         return jsonify({'message': 'Instructor not found'})
-
-
-
-
 
 
 
@@ -442,30 +440,35 @@ def get_student_courses(studentID):
     else:
         return jsonify({'message': 'Student not found'})
 
+
 @app.route('/student-courses/<string:studentID>/remove/<string:courseID>', methods=['DELETE'])
 def remove_student_course(studentID, courseID):
-    # Check if the student and course exist in your database (you need to implement this)
+    # Check if the student exists in your database
     student = mongo.db.students.find_one({'studentID': studentID})
-    course = mongo.db.courses.find_one({'courseID': courseID})
     
-    if student and course:
+    if student:
+        # Check if the student has a grades dictionary
+        if 'grades' in student:
+            grades = student['grades']
+
+            # Check if the courseID exists in the grades dictionary
+            if courseID in grades:
+                # Remove the courseID:grade pair from the grades dictionary
+                del grades[courseID]
+                mongo.db.students.update_one({'studentID': studentID}, {'$set': {'grades': grades}})
+
         enrolledCourses = student.get('enrolledCourses', [])
-        enrolledStudents = course.get('enrolledStudents', [])
-        
-        if courseID in enrolledCourses and studentID in enrolledStudents:
+        if courseID in enrolledCourses:
             # Remove the course ID from the student's enrolled courses
             enrolledCourses.remove(courseID)
             mongo.db.students.update_one({'studentID': studentID}, {'$set': {'enrolledCourses': enrolledCourses}})
-            
+
             # Remove the student ID from the course's enrolled students
-            enrolledStudents.remove(studentID)
-            mongo.db.courses.update_one({'courseID': courseID}, {'$set': {'enrolledStudents': enrolledStudents}})
+            mongo.db.courses.update_one({'courseID': courseID}, {'$pull': {'enrolledStudents': studentID}})
             
             return jsonify({'message': 'Course removed successfully'})
-        else:
-            return jsonify({'message': 'Course or student not found in enrollment records'})
-    else:
-        return jsonify({'message': 'Student or course not found'})
+    
+    return jsonify({'message': 'Student or course not found'}), 404
 
 
 

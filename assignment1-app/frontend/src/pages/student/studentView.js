@@ -69,15 +69,6 @@ function StudentView() {
       .catch((error) => {
         console.error('Error fetching credits earned:', error);
       });
-      axios.get(`${API_URL}/student/grade/${studentID}`)
-      .then((response) => {
-        console.log("API grade:", response.data);
-        setGrade(response.data.course_grade);
-      })
-      .catch((error) => {
-        console.error('Error fetching grade:', error);
-      });
-      
 
   }, [studentID]);
 
@@ -103,8 +94,37 @@ function StudentView() {
           // Fetch the enrolled courses for the student and update the state
           axios.get(`${API_URL}/student-courses/${studentID}`)
             .then((response) => {
-              console.log("Enrolled courses:", response.data);
-              setEnrolledCourses(response.data);
+              console.log("API Student Courses:", response.data);
+              const enrolledCourses = response.data;
+          
+              // To store all courseID values in an array
+              const courseIDs = enrolledCourses.map(course => course.courseID);
+              console.log("Course IDs:", courseIDs);
+          
+              // Fetch the grade for each course and add it to the course data
+              const coursePromises = courseIDs.map(courseID => {
+                return axios.get(`${API_URL}/student/grade/${studentID}/${courseID}`)
+                  .then((gradeResponse) => {
+                    const course = enrolledCourses.find(course => course.courseID === courseID);
+                    if (gradeResponse.data.grade !== undefined) {
+                      // If grade is found, add it to the course data
+                      course.grade = gradeResponse.data.grade;
+                    } else {
+                      // Handle the case where grade is not found
+                      console.error(`Grade not found for course ${courseID}`);
+                    }
+                  })
+                  .catch((error) => {
+                    console.error(`Error fetching grade for course ${courseID}:`, error);
+                  });
+              });
+          
+              // Wait for all grade fetch requests to complete
+              Promise.all(coursePromises)
+                .then(() => {
+                  // After all grades are fetched and added to the course data, you can set the state
+                  setEnrolledCourses(enrolledCourses);
+                });
             })
             .catch((error) => {
               console.error('Error fetching enrolled courses:', error);

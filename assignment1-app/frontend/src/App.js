@@ -37,11 +37,11 @@ function App() {
           <Link to="/admin-dashboard" style={styles.link}>
             Admin
           </Link>
-          <Link to="/student-dashboard" style={styles.link}>
-            Student
-          </Link>
           <Link to="/instructor-dashboard" style={styles.link}>
             Instructor
+          </Link>
+          <Link to="/student-dashboard" style={styles.link}>
+            Student
           </Link>
         </nav>
         <Routes>
