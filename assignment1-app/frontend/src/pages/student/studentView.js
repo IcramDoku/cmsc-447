@@ -6,9 +6,12 @@ import axios from 'axios'; // Import axios for making API requests
 function StudentView() {
   const location = useLocation();
   const { studentID, name } = location.state || {};
+  const [students, setStudents] = useState([]);
   const [creditsEarned, setCreditsEarned] = useState(null);
+  const [grade, setGrade] = useState(null);
   const [courses, setCourses] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const courseIDs = [];
 
   const API_URL = 'http://127.0.0.1:5000'; 
 
@@ -21,11 +24,39 @@ function StudentView() {
       .catch((error) => {
         console.error('Error fetching courses:', error);
       });
-    // Make an API request to fetch the enrolled courses for the student
     axios.get(`${API_URL}/student-courses/${studentID}`)
       .then((response) => {
         console.log("API Student Courses:", response.data);
-        setEnrolledCourses(response.data);
+        const enrolledCourses = response.data;
+    
+        // To store all courseID values in an array
+        const courseIDs = enrolledCourses.map(course => course.courseID);
+        console.log("Course IDs:", courseIDs);
+    
+        // Fetch the grade for each course and add it to the course data
+        const coursePromises = courseIDs.map(courseID => {
+          return axios.get(`${API_URL}/student/grade/${studentID}/${courseID}`)
+            .then((gradeResponse) => {
+              const course = enrolledCourses.find(course => course.courseID === courseID);
+              if (gradeResponse.data.grade !== undefined) {
+                // If grade is found, add it to the course data
+                course.grade = gradeResponse.data.grade;
+              } else {
+                // Handle the case where grade is not found
+                console.error(`Grade not found for course ${courseID}`);
+              }
+            })
+            .catch((error) => {
+              console.error(`Error fetching grade for course ${courseID}:`, error);
+            });
+        });
+    
+        // Wait for all grade fetch requests to complete
+        Promise.all(coursePromises)
+          .then(() => {
+            // After all grades are fetched and added to the course data, you can set the state
+            setEnrolledCourses(enrolledCourses);
+          });
       })
       .catch((error) => {
         console.error('Error fetching enrolled courses:', error);
@@ -38,7 +69,16 @@ function StudentView() {
       .catch((error) => {
         console.error('Error fetching credits earned:', error);
       });
+      axios.get(`${API_URL}/student/grade/${studentID}`)
+      .then((response) => {
+        console.log("API grade:", response.data);
+        setGrade(response.data.course_grade);
+      })
+      .catch((error) => {
+        console.error('Error fetching grade:', error);
+      });
       
+
   }, [studentID]);
 
   const handleEnrollment = async (courseID) => {
@@ -140,7 +180,7 @@ function StudentView() {
               <td>{course.instructor_name}{/* You need to fetch and display the instructor's name here */}</td>
               <td>{course.instructor_department}{/* You need to fetch and display the instructor's department here */}</td>
               <td>3</td> {/* # of credits*/}
-              <td>97%</td>
+              <td>{course.grade}</td>
               <button onClick={() => handleRemoveSingleCourse(course.courseID)}>Drop</button>
             </tr>
           ))}

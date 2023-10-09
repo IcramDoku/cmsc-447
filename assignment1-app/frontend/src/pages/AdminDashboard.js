@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const dashboardStyles = {
   container: {
@@ -32,17 +32,41 @@ const dashboardStyles = {
 };
 
 function Dashboard() {
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleLogin = () => {
+    // Replace 'Admin123#!@' with your desired password
+    if (password === 'Admin123#!@') {
+      // If the login is successful, redirect to the admin dashboard
+      navigate('/admin-login');
+    } else {
+      alert('Invalid password. Please try again.');
+    }
+  };
+
   return (
     <div style={dashboardStyles.container}>
       <h1 style={dashboardStyles.heading}>Welcome Admin!</h1>
-      <p>You must sign in with your username and password:</p>
+      <p>You must sign in with your password:</p>
+      <div>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={handlePasswordChange}
+        />
+      </div>
       <div style={dashboardStyles.options}>
-        <Link to="/admin-login" style={dashboardStyles.optionButton}>
-        Login
-        </Link>
+        <button onClick={handleLogin} style={dashboardStyles.optionButton}>Login</button>
       </div>
     </div>
   );
 }
 
 export default Dashboard;
+

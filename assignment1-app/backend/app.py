@@ -134,6 +134,148 @@ def delete_instructor(instructor_id):
         return jsonify({"message": "Instructor not found or already deleted"}), 404
 
 
+@app.route('/instructor/courses/<string:instructor_id>', methods=['GET'])
+def get_courses_by_instructor(instructor_id):
+    try:
+        courses_collection = mongo.db.courses
+        students_collection = mongo.db.students
+
+        # Retrieve course information
+        course = courses_collection.find_one({"instructorID": instructor_id})
+        if not course:
+            return jsonify({"error": "Course not found"}), 404
+
+        course_title = course.get("courseTitle")
+        course_id = course.get("courseID")
+        
+        if course:
+            enrolled_students = course.get("enrolledStudents", [])
+
+            students_info = []
+
+            for student_id in enrolled_students:
+                student = students_collection.find_one({"studentID": student_id})
+                if student:
+                    # Check if the student has a grades dictionary
+                    if 'grades' in student:
+                        grades = student['grades']
+
+                        # Check if the course_id exists in the grades dictionary
+                        if course_id in grades:
+                            course_grade = grades[course_id]
+                    student_name = student.get("name")
+                    student_info = {
+                        "studentID": student_id,
+                        "studentName": student_name,
+                        "courseTitle": course_title,
+                        "courseID": course_id,
+                        "grade": course_grade
+                    }
+                    students_info.append(student_info)
+
+            return jsonify({
+                "enrolled_students": students_info
+            })
+        else:
+            return jsonify({"error": "Course not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/student/grade/<string:student_id>/<string:course_id>', methods=['GET'])
+def get_student_course_grade(student_id, course_id):
+    try:
+        students_collection = mongo.db.students
+
+        # Find the student based on the provided student_id
+        student = students_collection.find_one({'studentID': student_id})
+
+        if student:
+            # Check if the student has a grades dictionary
+            if 'grades' in student:
+                grades = student['grades']
+
+                # Check if the course_id exists in the grades dictionary
+                if course_id in grades:
+                    course_grade = grades[course_id]
+                    return jsonify({'studentID': student_id, 'courseID': course_id, 'grade': course_grade})
+                else:
+                    return jsonify({'message': f'Grade for course {course_id} not found for student {student_id}'})
+            else:
+                return jsonify({'message': 'Grades not found for the student'})
+
+        else:
+            return jsonify({'message': 'Student not found'}), 404
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+@app.route('/add_grade/<string:instructor_id>/<string:student_id>', methods=['POST'])
+def add_grade_to_student(instructor_id, student_id):
+    try:
+        courses_collection = mongo.db.courses
+
+        # Retrieve course information
+        course = courses_collection.find_one({"instructorID": instructor_id})
+        if not course:
+            return jsonify({"error": "Course not found"}), 404
+
+        data = request.json
+        grade = data.get('grade')
+
+        if grade is None:
+            return jsonify({'error': 'Grade is required'}), 400
+
+        students_collection = mongo.db.students
+
+        # Check if the student is enrolled in the course
+        if student_id in course.get("enrolledStudents", []):
+            student = students_collection.find_one({"studentID": student_id})
+            if student:
+                # Check if the student has a grades dictionary, create one if not
+                if 'grades' not in student:
+                    student['grades'] = {}
+                student['grades'][course['courseID']] = grade
+
+                students_collection.update_one(
+                    {"studentID": student_id},
+                    {"$set": {"grades": student['grades']}}
+                )
+
+                updated_student = {
+                    "studentID": student_id,
+                    "grades": student['grades']
+                }
+
+                return jsonify({'message': 'Grade added successfully', 'updated_student': updated_student}), 200
+            else:
+                return jsonify({"error": "Student not found"}), 404
+        else:
+            return jsonify({"error": "Student is not enrolled in the course"}), 400
+
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+        return jsonify({'error': 'An error occurred'}), 500
+
+
+
+
+@app.route('/department/<string:instructorID>', methods=['GET'])
+def get_department(instructorID):
+    instructor = mongo.db.instructors.find_one({'instructorID': instructorID})
+
+    if instructor:
+        department = instructor.get('department')
+        return jsonify({'instructorID': instructorID, 'department': department})
+    else:
+        return jsonify({'message': 'Instructor not found'})
+
+
+
+
+
+
 
 # GET request to fetch all courses
 @app.route('/courses', methods=['GET'])
@@ -324,6 +466,7 @@ def remove_student_course(studentID, courseID):
             return jsonify({'message': 'Course or student not found in enrollment records'})
     else:
         return jsonify({'message': 'Student or course not found'})
+
 
 
 
