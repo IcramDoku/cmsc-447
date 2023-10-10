@@ -6,12 +6,9 @@ import axios from 'axios'; // Import axios for making API requests
 function StudentView() {
   const location = useLocation();
   const { studentID, name } = location.state || {};
-  const [students, setStudents] = useState([]);
   const [creditsEarned, setCreditsEarned] = useState(null);
-  const [grade, setGrade] = useState(null);
   const [courses, setCourses] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
-  const courseIDs = [];
 
   const API_URL = 'http://127.0.0.1:5000'; 
 
@@ -73,7 +70,6 @@ function StudentView() {
   }, [studentID]);
 
   const handleEnrollment = async (courseID) => {
-    var currentCredits = parseInt(creditsEarned, 10);
     try {
       // Make an API request to enroll the student in the course
       const response = await axios.post(`${API_URL}/enrollment`, {
@@ -129,8 +125,16 @@ function StudentView() {
             .catch((error) => {
               console.error('Error fetching enrolled courses:', error);
             });
-            var newCreditsEarned = currentCredits + 3;
-            setCreditsEarned(newCreditsEarned);
+            // Re-render to user
+            axios.get(`${API_URL}/credits-earned/${studentID}`)
+              .then((response) => {
+                console.log("API Credits Earned:", response.data);
+                setCreditsEarned(response.data.creditsEarned);
+              })
+              .catch((error) => {
+                console.error('Error fetching credits earned:', error);
+              });
+              
         } else {
           console.error('Enrollment failed:', response.data.message);
         }
@@ -142,7 +146,6 @@ function StudentView() {
   
 
   const handleRemoveSingleCourse = async (courseID) => {
-    var currentCredits = parseInt(creditsEarned, 10);
     try {
       // Make a DELETE request to remove the course for the student
       const response = await axios.delete(`${API_URL}/student-courses/${studentID}/remove/${courseID}`);
@@ -152,8 +155,15 @@ function StudentView() {
         setEnrolledCourses((prevEnrolledCourses) =>
           prevEnrolledCourses.filter((course) => course.courseID !== courseID)
         );
-        var newCreditsEarned = currentCredits - 3;
-        setCreditsEarned(newCreditsEarned);
+        // Re-render to user
+        axios.get(`${API_URL}/credits-earned/${studentID}`)
+        .then((response) => {
+          console.log("API Credits Earned:", response.data);
+          setCreditsEarned(response.data.creditsEarned);
+        })
+        .catch((error) => {
+          console.error('Error fetching credits earned:', error);
+        });
       }
     } catch (error) {
       console.error('Error removing course:', error);

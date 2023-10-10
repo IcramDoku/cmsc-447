@@ -49,7 +49,7 @@ function UserAdmin() {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/courses`, {
+      await axios.post(`${API_URL}/courses`, {
         courseID: courseID,
         courseTitle: courseTitle,
         instructorID: instructorID,
@@ -98,7 +98,7 @@ function UserAdmin() {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/instructors`, {
+      await axios.post(`${API_URL}/instructors`, {
         instructorID: instructorID,
         name: name,
         department: department,

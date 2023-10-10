@@ -377,6 +377,7 @@ def enroll_student():
     # Check if the student and course exist in your database (you need to implement this)
     student = mongo.db.students.find_one({'studentID': studentID})
     course = mongo.db.courses.find_one({'courseID': courseID})
+    students_collection = mongo.db.students
     
     if student and course:
         enrolledCourses = student.get('enrolledCourses', [])
@@ -390,6 +391,11 @@ def enroll_student():
             # Add the student ID to the course's enrolled students
             enrolledStudents.append(studentID)
             mongo.db.courses.update_one({'courseID': courseID}, {'$set': {'enrolledStudents': enrolledStudents}})
+            
+            # Increment the creditsEarned for the student by 3
+            current_credits_earned = int(student.get('creditsEarned', 0))
+            new_credits_earned = current_credits_earned + 3
+            students_collection.update_one({'studentID': studentID}, {'$set': {'creditsEarned': new_credits_earned}})
             
             return jsonify({'message': 'Enrollment successful'})
         else:
@@ -465,6 +471,11 @@ def remove_student_course(studentID, courseID):
 
             # Remove the student ID from the course's enrolled students
             mongo.db.courses.update_one({'courseID': courseID}, {'$pull': {'enrolledStudents': studentID}})
+            
+            # Decrement the creditsEarned for the student by 3, but ensure it doesn't go below 0
+            currentCreditsEarned = int(student.get('creditsEarned', 0))
+            newCreditsEarned = max(currentCreditsEarned - 3, 0)  # Ensure it doesn't go below 0
+            mongo.db.students.update_one({'studentID': studentID}, {'$set': {'creditsEarned': newCreditsEarned}})
             
             return jsonify({'message': 'Course removed successfully'})
     

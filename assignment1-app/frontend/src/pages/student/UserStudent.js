@@ -33,6 +33,7 @@ function Login() {
         // Clear studnetID and name fields after successful login
         setStudentID('');
         setName('');
+        setCreditsEarned('');
         setLoginSuccessMessage(data.message);
 
         // Use the "useNavigate" hook to navigate to "/student-view" with query parameters

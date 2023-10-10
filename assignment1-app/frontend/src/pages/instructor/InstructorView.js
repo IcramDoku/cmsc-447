@@ -10,8 +10,6 @@ function InstructorView() {
   const [department, setDepartment] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [grade, setGrade] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   const API_URL = 'http://127.0.0.1:5000';
 
@@ -45,30 +43,13 @@ function InstructorView() {
     }
   }, [instructorID]);
 
-  const handleGradeChange = (event) => {
-    setGrade(event.target.value);
-  };
-
   const handleGradeSubmission = async (student) => {
-    setErrorMessage('');
-    setSuccessMessage('');
-
     try {
-      // Validate the grade input
-      if (!grade) {
-        setErrorMessage('Grade is required');
-        return;
-      }
-
       // Send a POST request to add the grade for the specific student
-      const response = await axios.post(`${API_URL}/add_grade/${instructorID}/${student.studentID}`, { grade });
-
-      // Assuming your API returns a success message upon successful grade submission
-      const data = response.data;
+      await axios.post(`${API_URL}/add_grade/${instructorID}/${student.studentID}`, { grade });
 
       // Clear the grade input after successful submission
       setGrade('');
-      setSuccessMessage(data.message);
       //re-render
       axios.get(`${API_URL}/instructor/courses/${instructorID}`)
         .then((response) => {
@@ -79,7 +60,7 @@ function InstructorView() {
           }
         })
     } catch (error) {
-      setErrorMessage('Error submitting grade');
+      console.log('Error submitting grade', error);
     }
   };
 
