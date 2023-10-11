@@ -1,5 +1,3 @@
 # Course: CMSC 447 - 5:30pm
 #### Author: Icram Doku (VT69093)
-### Desc: This program transforms words from an initial state to a final state while 
-### considering different cost measures and implementing a heuristic function.
-### Resources: https://github.com/aimacode, p8.py, and wj.py
+#### Desc: This is my CRUD web application using React, Flask, Python, JavaScript, HTML, and CSS. It is a simple Student registration application. 
