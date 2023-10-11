@@ -5,26 +5,25 @@ import axios from 'axios';
 const API_URL = 'http://127.0.0.1:5000';
 
 function UserAdmin() {
-  // Instructors
+  // State for managing instructors
   const [instructors, setInstructors] = useState([]);
   const [instructorID, setInstructorID] = useState('');
   const [name, setName] = useState('');
   const [department, setDepartment] = useState('');
 
-  // Courses
+  // State for managing courses
   const [courses, setCourses] = useState([]);
   const [courseID, setCourseID] = useState('');
   const [courseTitle, setCourseTitle] = useState('');
 
+  // State for managing assigned courses and status messages
   const [assignedCourses, setAssignedCourses] = useState([]);
   const [assignmentStatus, setAssignmentStatus] = useState(null);
   const [courseStatus, setCourseStatus] = useState(null);
   const [instructorStatus, setInstructorStatus] = useState(null);
 
-  ///const navigate = useNavigate();
-
+  // Use the useEffect hook to fetch data from the server
   useEffect(() => {
-    // Fetch instructors and courses from the server on component mount
     axios.get(`${API_URL}/instructors`)
       .then((response) => {
         setInstructors(response.data);
@@ -42,6 +41,7 @@ function UserAdmin() {
       });
   }, []);
 
+  // Function to handle adding a course
   const handleAddCourse = async () => {
     if (!courseID || !courseTitle) {
       setCourseStatus('Missing course ID or course title');
@@ -49,48 +49,51 @@ function UserAdmin() {
     }
 
     try {
+      // Send a POST request to add a new course
       await axios.post(`${API_URL}/courses`, {
         courseID: courseID,
         courseTitle: courseTitle,
         instructorID: instructorID,
       });
       setCourseStatus('Course created successfully!');
-      //re-render
-      axios.get(`${API_URL}/courses`)
-      .then((response) => {
-        setCourses(response.data);
-      })
 
+      // Clear input fields
       setCourseID('');
       setCourseTitle('');
       setInstructorID('');
+
+      // Re-fetch courses to update the list
+      axios.get(`${API_URL}/courses`)
+      .then((response) => {
+        setCourses(response.data);
+      })    
 
     } catch (error) {
       console.error('Error in add course: ', error);
     }
   };
 
-  // The handleRemoveCourse function
-  const handleRemoveCourse = async (courseID) => { // Corrected parameter name here
+  // Function to handle removing a course
+  const handleRemoveCourse = async (courseID) => { 
     try {
-      await axios.delete(`${API_URL}/courses/${courseID}`); // Corrected endpoint here
+      // Send a DELETE request to remove a course by its ID
+      await axios.delete(`${API_URL}/courses/${courseID}`);
 
       // Update the state to remove the course from the list
       setCourses(courses.filter((course) => course.id !== courseID));
 
-      // Optionally, you can display a success message or perform other actions upon successful removal.
-      //re-render
+      // Re-fetch courses to update the list
       axios.get(`${API_URL}/courses`)
       .then((response) => {
         setCourses(response.data);
       })
 
     } catch (error) {
-      // Handle errors, e.g., show an error message to the user
       console.error('Error removing course:', error);
     }
   };
 
+  // Function to handle adding an instructor
   const handleAddInstructor = async () => {
     if (!instructorID || !name || !department) {
       setInstructorStatus('Missing instructorID, name, or department');
@@ -98,27 +101,31 @@ function UserAdmin() {
     }
 
     try {
+      // Send a POST request to add a new instructor
       await axios.post(`${API_URL}/instructors`, {
         instructorID: instructorID,
         name: name,
         department: department,
       });
       setInstructorStatus('Instructor created successfully!');
-      //re-render
+
+      // Clear input fields
+      setInstructorID('');
+      setName('');
+      setDepartment('');
+
+      // Re-fetch instructors to update the list
       axios.get(`${API_URL}/instructors`)
       .then((response) => {
         setInstructors(response.data);
       })
-
-      setInstructorID('');
-      setName('');
-      setDepartment('');
 
     } catch (error) {
       console.error('Error in add instructor: ', error);
     }
   };
 
+  // Function to handle removing an instructor
   const handleRemoveInstructor = async (instructorID) => {
     try {
       // Send a DELETE request to remove the course by its ID
@@ -127,18 +134,19 @@ function UserAdmin() {
       // Update the state to remove the course from the list
       setInstructors(instructors.filter((instructor) => instructor.id !== instructorID));
       
-      // Optionally, you can display a success message or perform other actions upon successful removal.
-      //re-render
+      // Re-fetch instructors to update the list
       axios.get(`${API_URL}/instructors`)
       .then((response) => {
         setInstructors(response.data);
       })
+
     } catch (error) {
       // Handle errors, e.g., show an error message to the user
       console.error('Error removing course:', error);
     }
   };
 
+  // Function to assign an instructor to a course
   const assignInstructor = () => {
     if (!courseID || !instructorID) {
       setAssignmentStatus('Missing course or instructor');
@@ -148,7 +156,7 @@ function UserAdmin() {
     axios.post(`${API_URL}/assign`, {
         courseID,
         instructorID,
-    }).then((response) => {
+      }).then((response) => {
         console.log('Server response:', response.data);
         const assignedCourse = {
           courseID,
@@ -156,12 +164,12 @@ function UserAdmin() {
         };
         setAssignedCourses([...assignedCourses, assignedCourse]);
         setAssignmentStatus('Instructor assigned successfully!');
-        //re-render
+        // Re-fetch courses to update the list
         axios.get(`${API_URL}/courses`)
         .then((response) => {
           setCourses(response.data);
         })
-        //clear after successful assignment
+        // Clear after successful assignment
         setCourseID('');
         setInstructorID('');
       })
@@ -169,11 +177,6 @@ function UserAdmin() {
         if (error.response) {
           // The request was made, but the server responded with a status code
           console.error('Response data:', error.response.data);
-          console.error('Response status:', error.response.status);
-          console.error('Response headers:', error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error('No response received. Request:', error.request);
         } else {
           // Something else went wrong
           console.error('Error:', error.message);
@@ -184,11 +187,9 @@ function UserAdmin() {
   };
 
   return (
-    // Inside your component's return statement
     <div>
       <h1>Admin Dashboard</h1>
 
-      {/* Course Management */}
       <h2>Course Management</h2>
       <ul>
         {courses.map((course) => (
@@ -217,7 +218,6 @@ function UserAdmin() {
       </div>
       {courseStatus && <p>{courseStatus}</p>}
 
-      {/* Instructor Management */}
       <h2>Instructor Management</h2>
       <ul>
         {instructors.map((instructor) => (
@@ -252,7 +252,6 @@ function UserAdmin() {
       </div>
       {instructorStatus && <p>{instructorStatus}</p>}
 
-      {/* Assign Instructors to Courses */}
       <h2>Assign Instructors to Courses</h2>
       <ul>
         {assignedCourses.map((assignment, index) => (
@@ -264,7 +263,6 @@ function UserAdmin() {
       <div>
         <select onChange={(e) => setCourseID(e.target.value)}>
           <option value="">Select Course</option>
-          {/* Render your course options here */}
           {courses.map((course) => (
             <option key={course.id} value={course.id}>
               {course.courseID}
@@ -273,7 +271,6 @@ function UserAdmin() {
         </select>
         <select onChange={(e) => setInstructorID(e.target.value)}>
           <option value="">Select Instructor</option>
-          {/* Render your instructor options here */}
           {instructors.map((instructor) => (
             <option key={instructor.id} value={instructor.id}>
               {instructor.instructorID}
@@ -284,7 +281,7 @@ function UserAdmin() {
       </div>
       {assignmentStatus && <p>{assignmentStatus}</p>}
       <div>
-        <Link to="/">
+        <Link to="/admin-dashboard">
         Log out
         </Link>
       </div>

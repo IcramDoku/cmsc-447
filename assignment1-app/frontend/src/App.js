@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+
+// Import various components and pages
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import StudentDashboard from './pages/StudentDashboard';
@@ -10,6 +12,7 @@ import StudentView from './pages/student/studentView';
 import { LoginInstructor, RegisterInstructor } from './pages/instructor/UserInstructor';
 import InstructorView from './pages/instructor/InstructorView';
 
+// Styles for the navigation bar
 const styles = {
   navbar: {
     position: 'sticky',

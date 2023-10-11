@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+// Styles
 const dashboardStyles = {
   container: {
     display: 'flex',
@@ -31,6 +32,7 @@ const dashboardStyles = {
   },
 };
 
+// The Instructor Dashboard component
 function Dashboard() {
     return (
       <div style={dashboardStyles.container}>

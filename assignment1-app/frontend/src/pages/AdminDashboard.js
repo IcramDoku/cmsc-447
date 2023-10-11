@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Styles
 const dashboardStyles = {
   container: {
     display: 'flex',
@@ -30,21 +31,29 @@ const dashboardStyles = {
     cursor: 'pointer',
   },
 };
-
+// The Dashboard component
 function Dashboard() {
+  // State to manage the password input
   const [password, setPassword] = useState('');
+
+  // A function to navigate between pages
   const navigate = useNavigate();
 
+  // Handle changes in the password input
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
 
+  // Handle the login action
   const handleLogin = () => {
-    // Replace 'Admin123#!@' with your desired password
+
+    // This is the choosen only password to access the Admin page 'Admin123#!@' 
+    // Only someone with this source code can know it
     if (password === 'Admin123#!@') {
       // If the login is successful, redirect to the admin dashboard
       navigate('/admin-login');
     } else {
+      // Display an alert for an invalid password
       alert('Invalid password. Please try again.');
     }
   };

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+// Import axios for making API requests
 import axios from 'axios';
 
+// InstructorView component
 function InstructorView() {
+  // Get the current location
   const location = useLocation();
   const { instructorID, name } = location.state || {};
   const [students, setStudents] = useState([]);
@@ -14,9 +17,10 @@ function InstructorView() {
   const API_URL = 'http://127.0.0.1:5000';
 
   useEffect(() => {
+    // Fetch data for the instructor and their students
     const fetchData = async () => {
-      axios
-        .get(`${API_URL}/instructor/courses/${instructorID}`)
+      // Get a list of students enrolled in courses taught by this instructor
+      axios.get(`${API_URL}/instructor/courses/${instructorID}`)
         .then((response) => {
           if (response.data && Array.isArray(response.data.enrolled_students)) {
             setStudents(response.data.enrolled_students);
@@ -27,8 +31,9 @@ function InstructorView() {
         .catch((error) => {
           console.error('Error fetching students:', error);
         });
-
-        axios.get(`${API_URL}/department/${instructorID}`)
+      
+      // Get the department of the instructor
+      axios.get(`${API_URL}/department/${instructorID}`)
         .then((response) => {
           console.log("API department:", response.data);
           setDepartment(response.data.department);
@@ -39,6 +44,7 @@ function InstructorView() {
     };
 
     if (instructorID) {
+      // Call fetchData when the instructorID changes
       fetchData();
     }
   }, [instructorID]);
@@ -48,9 +54,10 @@ function InstructorView() {
       // Send a POST request to add the grade for the specific student
       await axios.post(`${API_URL}/add_grade/${instructorID}/${student.studentID}`, { grade });
 
-      // Clear the grade input after successful submission
+      // Clear the grade input
       setGrade('');
-      //re-render
+
+      // Re-fetch the list of students and their grades
       axios.get(`${API_URL}/instructor/courses/${instructorID}`)
         .then((response) => {
           if (response.data && Array.isArray(response.data.enrolled_students)) {
@@ -112,7 +119,7 @@ function InstructorView() {
         </tbody>
       </table>
       <div>
-        <Link to="/">
+        <Link to="/instructor-dashboard">
           Log out
         </Link>
       </div>

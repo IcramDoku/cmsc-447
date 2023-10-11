@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+
+//Import the `useNavigate` hook for navigation
 import { useNavigate } from 'react-router-dom';
+// Import axios for making API requests
 import axios from 'axios';
 
+// Define the API URL
 const API_URL = 'http://127.0.0.1:5000'; 
 
+// LoginInstructor component
 function LoginInstructor() {
   const [instructorID, setinstructorID] = useState('');
   const [name, setName] = useState('');
   const [loginError, setLoginError] = useState(null);
   const [loginSuccessMessage, setLoginSuccessMessage] = useState('');
+  // Initialize the `navigate` function from the `useNavigate` hook
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -25,20 +31,18 @@ function LoginInstructor() {
 
       // Check if the login was successful based on the response
       if (response.status === 200) {
-        // Handle successful login here, e.g., navigate to a new page or store user data
         console.log('login successful:', data);
 
-        // Clear studnetID and name fields after successful login
+        // Clear fields after successful login
         setinstructorID('');
         setName('');
         setLoginSuccessMessage(data.message);
 
-        // Use the "useNavigate" hook to navigate to "/student-view" with query parameters
+        // Navigate the the instructor-view page if logged in
         navigate('/instructor-view', {
-          state: { instructorID, name}, // Pass instructorID and name as query parameters
+          state: { instructorID, name},
         });
       } else {
-        // Handle login failure
         setLoginError('login failed. Please check your studnetID and name.');
       }
     } catch (error) {
@@ -88,7 +92,7 @@ function LoginInstructor() {
   );
 }
 
-
+// RegisterInstructor component
 function RegisterInstructor() {
   const [instructorID, setinstructorID] = useState('');
   const [name, setName] = useState('');
@@ -106,8 +110,6 @@ function RegisterInstructor() {
         name: name,
         department: department,
       });
-
-      // Assuming your API returns a success message or user data upon successful signup
       const data = response.data;
 
       // Clear form fields after successful register
@@ -115,7 +117,8 @@ function RegisterInstructor() {
       setName('');
       setDepartment('');
       setRegisterSuccessMessage(data.message);
-      // You can handle the successful register response here.
+
+      // Navigate the the login page if registed
       navigate('/instructor-login');
 
     } catch (error) {
