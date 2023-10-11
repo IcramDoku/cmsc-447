@@ -11,3 +11,5 @@
 3. You can start the UI by running `npm start` in the same directory.
 
 4. Additionally, for the Admin login, I thought it would be appropriate to limit access to only one admin. The password is `Admin123#!@`.
+
+5. The MongoDB database is hosted on MongoDB Atlas, available online for as long as I want it to be. I have also granted access for anyone to use it.
