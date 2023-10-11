@@ -1,4 +1,4 @@
-
+#### Hello ignore this too, just some notes and the readme from react setup
 We got a buch of dashboards working, but signup and signin both route to creating a user/adding to database, so fix that! will need a route for user data retrival. 
 
 
