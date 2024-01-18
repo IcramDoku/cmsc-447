@@ -281,7 +281,7 @@ function UserAdmin() {
       </div>
       {assignmentStatus && <p>{assignmentStatus}</p>}
       <div>
-        <Link to="/admin-dashboard">
+        <Link to={`${process.env.PUBLIC_URL}/admin-dashboard`}>
         Log out
         </Link>
       </div>

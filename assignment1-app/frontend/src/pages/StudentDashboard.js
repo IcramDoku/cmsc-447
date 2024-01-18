@@ -39,12 +39,13 @@ function Dashboard() {
       <h1 style={dashboardStyles.heading}>Welcome Student!</h1>
       <p>Please select an option:</p>
       <div style={dashboardStyles.options}>
-        <Link to="/student-login" style={dashboardStyles.optionButton}>
+      <Link to={`${process.env.PUBLIC_URL}/student-login`} style={dashboardStyles.optionButton}>
         Login
-        </Link>
-        <Link to="/student-register" style={dashboardStyles.optionButton}>
+      </Link>
+      <Link to={`${process.env.PUBLIC_URL}/student-register`} style={dashboardStyles.optionButton}>
         Register
-        </Link>
+      </Link>
+
       </div>
     </div>
   );

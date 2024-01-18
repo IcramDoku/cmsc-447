@@ -246,7 +246,7 @@ function StudentView() {
           </tbody>
         </table>
         <div>
-        <Link to="/student-dashboard">
+        <Link to={`${process.env.PUBLIC_URL}/student-dashboard`}>
         Log out
         </Link>
       </div>

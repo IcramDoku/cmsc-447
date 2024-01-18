@@ -51,7 +51,7 @@ function Dashboard() {
     // Only someone with this source code can know it
     if (password === 'Admin123#!@') {
       // If the login is successful, redirect to the admin dashboard
-      navigate('/admin-login');
+      navigate(`${process.env.PUBLIC_URL}/admin-login`);
     } else {
       // Display an alert for an invalid password
       alert('Invalid password. Please try again.');

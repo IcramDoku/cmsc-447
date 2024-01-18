@@ -119,7 +119,7 @@ function InstructorView() {
         </tbody>
       </table>
       <div>
-        <Link to="/instructor-dashboard">
+        <Link to={`${process.env.PUBLIC_URL}/instructor-dashboard`}>
           Log out
         </Link>
       </div>

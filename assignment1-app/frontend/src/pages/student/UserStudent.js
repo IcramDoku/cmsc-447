@@ -42,7 +42,7 @@ function Login() {
         setLoginSuccessMessage(data.message);
 
         // Navigate the the student-view page if successful
-        navigate('/student-view', {
+        navigate(`${process.env.PUBLIC_URL}/student-view`, {
           state: { studentID, name},
         });
       } else {
@@ -86,7 +86,7 @@ function Login() {
       </form>
       <div>
         Not registered? 
-        <Link to="/student-register">
+        <Link to={`${process.env.PUBLIC_URL}/student-register`}>
         Register here
         </Link>
       </div>
@@ -123,7 +123,7 @@ function Register() {
       setRegisterSuccessMessage(data.message);
 
       // Navigate the the login page if registed
-      navigate('/student-login');
+      navigate(`${process.env.PUBLIC_URL}/student-login`);
 
     } catch (error) {
       setRegisterError('Register failed. User already exists or empty fields.');
@@ -171,7 +171,7 @@ function Register() {
       </form>
       <div>
         Already registered? 
-        <Link to="/student-login">
+        <Link to={`${process.env.PUBLIC_URL}/student-login`}>
         Login here
         </Link>
       </div>

@@ -39,7 +39,7 @@ function LoginInstructor() {
         setLoginSuccessMessage(data.message);
 
         // Navigate the the instructor-view page if logged in
-        navigate('/instructor-view', {
+        navigate(`${process.env.PUBLIC_URL}/instructor-view`, {
           state: { instructorID, name},
         });
       } else {
@@ -83,7 +83,7 @@ function LoginInstructor() {
       </form>
       <div>
         Not registered? 
-        <Link to="/instructor-register">
+        <Link to={`${process.env.PUBLIC_URL}/instructor-register`}>
         Register here
         </Link>
       </div>
@@ -119,7 +119,7 @@ function RegisterInstructor() {
       setRegisterSuccessMessage(data.message);
 
       // Navigate the the login page if registed
-      navigate('/instructor-login');
+      navigate(`${process.env.PUBLIC_URL}/instructor-login`);
 
     } catch (error) {
       setRegisterError('Register failed. User already exists or empty fields.');
@@ -167,7 +167,7 @@ function RegisterInstructor() {
       </form>
       <div>
         Already registered? 
-        <Link to="/instructor-login">
+        <Link to={`${process.env.PUBLIC_URL}/instructor-login`}>
         Login here
         </Link>
       </div>
