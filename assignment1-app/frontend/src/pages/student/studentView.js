@@ -12,7 +12,7 @@ function StudentView() {
   const [courses, setCourses] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-  const API_URL = 'http://127.0.0.1:5000'; 
+  const API_URL = 'https://cmsc447.pythonanywhere.com'; 
 
   useEffect(() => {
     // Fetch courses from the API

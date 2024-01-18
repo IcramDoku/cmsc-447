@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Define the API URL
-const API_URL = 'http://127.0.0.1:5000'; 
+const API_URL = 'https://cmsc447.pythonanywhere.com'; 
 
 // LoginInstructor component
 function LoginInstructor() {
