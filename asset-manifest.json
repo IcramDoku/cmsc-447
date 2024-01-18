@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.js": "/cmsc-447/static/js/main.3f147cfc.js",
+    "static/js/787.c9d6bb50.chunk.js": "/cmsc-447/static/js/787.c9d6bb50.chunk.js",
+    "index.html": "/cmsc-447/index.html",
+    "main.3f147cfc.js.map": "/cmsc-447/static/js/main.3f147cfc.js.map",
+    "787.c9d6bb50.chunk.js.map": "/cmsc-447/static/js/787.c9d6bb50.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.3f147cfc.js"
+  ]
+}
