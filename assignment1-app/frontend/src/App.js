@@ -31,7 +31,7 @@ const styles = {
 
 function App() {
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
       <div>
         <nav style={styles.navbar}>
           <Link to="/" style={styles.link}>
