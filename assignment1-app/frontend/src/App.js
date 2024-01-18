@@ -31,34 +31,34 @@ const styles = {
 
 function App() {
   return (
-    <Router basename={process.env.PUBLIC_URL}>
+    <Router>
       <div>
         <nav style={styles.navbar}>
-          <Link to="/" style={styles.link}>
+          <Link to={`${process.env.PUBLIC_URL}/`} style={styles.link}>
             Home
           </Link>
-          <Link to="/admin-dashboard" style={styles.link}>
+          <Link to={`${process.env.PUBLIC_URL}/admin-dashboard`} style={styles.link}>
             Admin
           </Link>
-          <Link to="/instructor-dashboard" style={styles.link}>
+          <Link to={`${process.env.PUBLIC_URL}/instructor-dashboard`} style={styles.link}>
             Instructor
           </Link>
-          <Link to="/student-dashboard" style={styles.link}>
+          <Link to={`${process.env.PUBLIC_URL}/student-dashboard`} style={styles.link}>
             Student
           </Link>
         </nav>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          <Route path="/student-dashboard" element={<StudentDashboard />} />
-          <Route path="/instructor-dashboard" element={<InstructorDashboard />} />
-          <Route path="/student-register" element={<Register />} />
-          <Route path="/student-login" element={<Login />} />
-          <Route path="/admin-login" element={<UserAdmin />} />
-          <Route path="/student-view" element={<StudentView />} />
-          <Route path="/instructor-login" element={<LoginInstructor />} />
-          <Route path="/instructor-register" element={<RegisterInstructor />} />
-          <Route path="/instructor-view" element={<InstructorView />} />
+          <Route path={`${process.env.PUBLIC_URL}/`} element={<Dashboard />} />
+          <Route path={`${process.env.PUBLIC_URL}/admin-dashboard`} element={<AdminDashboard />} />
+          <Route path={`${process.env.PUBLIC_URL}/student-dashboard`} element={<StudentDashboard />} />
+          <Route path={`${process.env.PUBLIC_URL}/instructor-dashboard`} element={<InstructorDashboard />} />
+          <Route path={`${process.env.PUBLIC_URL}/student-register`} element={<Register />} />
+          <Route path={`${process.env.PUBLIC_URL}/student-login`} element={<Login />} />
+          <Route path={`${process.env.PUBLIC_URL}/admin-login`} element={<UserAdmin />} />
+          <Route path={`${process.env.PUBLIC_URL}/student-view`} element={<StudentView />} />
+          <Route path={`${process.env.PUBLIC_URL}/instructor-login`} element={<LoginInstructor />} />
+          <Route path={`${process.env.PUBLIC_URL}/instructor-register`} element={<RegisterInstructor />} />
+          <Route path={`${process.env.PUBLIC_URL}/instructor-view`} element={<InstructorView />} />
         </Routes>
       </div>
     </Router>
