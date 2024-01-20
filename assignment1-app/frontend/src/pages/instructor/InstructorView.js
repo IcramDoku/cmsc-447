@@ -14,7 +14,7 @@ function InstructorView() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [grade, setGrade] = useState('');
 
-  const API_URL = 'http://localhost:4000'; 
+  const API_URL = 'https://cmsc-447.vercel.app'; 
 
   useEffect(() => {
     // Fetch data for the instructor and their students

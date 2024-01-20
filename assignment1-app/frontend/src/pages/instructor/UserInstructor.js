@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Define the API URL
-const API_URL = 'http://localhost:4000';  
+const API_URL = 'https://cmsc-447.vercel.app';  
 
 // LoginInstructor component
 function LoginInstructor() {

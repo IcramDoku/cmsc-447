@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000';
+const API_URL = 'https://cmsc-447.vercel.app';
 
 function UserAdmin() {
   // State for managing instructors

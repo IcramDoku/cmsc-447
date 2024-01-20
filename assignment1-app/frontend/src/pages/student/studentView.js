@@ -12,7 +12,7 @@ function StudentView() {
   const [courses, setCourses] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-  const API_URL = 'http://localhost:4000'; 
+  const API_URL = 'https://cmsc-447.vercel.app'; 
 
   useEffect(() => {
     // Fetch courses from the API
