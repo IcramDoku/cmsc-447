@@ -12,12 +12,7 @@ const port = process.env.PORT || 4000;
 // Registering middlewares
 dotEnv.config(); // Config with environment setup
 app.use(express.json()); // For formatting
-// Needs cors to connect to the frontend!!!
-app.use(cors({
-  origin: 'https://icramdoku.github.io/cmsc-447',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-})); 
+app.use(cors()); // Needs cors to connect to the frontend!!!
 
 let db; // Declare db variable
 
