@@ -14,7 +14,7 @@ function InstructorView() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [grade, setGrade] = useState('');
 
-  const API_URL = 'https://cmsc447.pythonanywhere.com';
+  const API_URL = 'http://localhost:4000'; 
 
   useEffect(() => {
     // Fetch data for the instructor and their students

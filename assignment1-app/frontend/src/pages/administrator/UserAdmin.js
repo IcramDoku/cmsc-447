@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = 'https://cmsc447.pythonanywhere.com';
+const API_URL = 'http://localhost:4000';
 
 function UserAdmin() {
   // State for managing instructors
