@@ -522,9 +522,11 @@ getConnection().then((database) => {
           await db.collection('courses').updateOne({ courseID: courseID }, { $set: { enrolledStudents: enrolledStudents } });
 
           // Increment the creditsEarned for the student by 3
-          const currentCreditsEarned = student.creditsEarned || 0;
+          const currentCreditsEarned = parseInt(student.creditsEarned || 0);
           const newCreditsEarned = currentCreditsEarned + 3;
+
           await db.collection('students').updateOne({ studentID: studentID }, { $set: { creditsEarned: newCreditsEarned } });
+
 
           return res.json({ message: 'Enrollment successful' });
         } else {
