@@ -11,6 +11,7 @@ import UserAdmin from './pages/administrator/UserAdmin';
 import StudentView from './pages/student/studentView';
 import { LoginInstructor, RegisterInstructor } from './pages/instructor/UserInstructor';
 import InstructorView from './pages/instructor/InstructorView';
+import backgroundImage from './bg-UMBC.png';
 
 // Styles for the navigation bar
 const styles = {
@@ -27,12 +28,18 @@ const styles = {
     color: '#fff',
     margin: '0 10px',
   },
+  app: {
+    position: 'relative',
+    minHeight: '100vh',
+    backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url(${backgroundImage})`,
+    backgroundSize: 'cover', 
+  },
 };
 
 function App() {
   return (
     <Router>
-      <div>
+      <div style={styles.app}>
         <nav style={styles.navbar}>
           <Link to={`${process.env.PUBLIC_URL}/`} style={styles.link}>
             Home
